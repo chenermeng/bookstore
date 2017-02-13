@@ -71,27 +71,25 @@
     app.controller('listCtrl', function ($scope, Books) {
         $scope.bookList = Books.query();
     })
-    app.controller('detailCtrl', function ($scope,Books,$routeParams,$location) {
+    app.controller('detailCtrl', function ($scope, Books, $routeParams, $location) {
         let id = $routeParams.cid;
         $scope.flag = true;
-        $scope.book = Books.get({bid:id});
+        $scope.book = Books.get({bid: id});
 
-        $scope.change=function () {
+        $scope.change = function () {
             $scope.flag = false;
         }
         $scope.update = function () {
-            Books.update({bid:id},$scope.book).$promise.then(function () {
+            Books.update({bid: id}, $scope.book).$promise.then(function () {
                 $scope.flag = true;
             })
         }
         $scope.remove = function () {
-            Books.remove({bid:id}).$promise.then(function () {
+            Books.remove({bid: id}).$promise.then(function () {
                 $location.path('/list')
             })
         }
     })
-
-
 
 
 </script>

@@ -1,0 +1,21 @@
+<div class="col-md-4" ng-repeat="book in bookList">
+    <div class="panel panel-success ">
+        <div class="panel-heading text-center h4" style="margin-top: 0px">
+            {{book.bookName}}
+        </div>
+        <div class="panel-body text-center">
+            <img ng-src="{{book.bookCover}}" alt="" style="width: 250px;height: 300px">
+        </div>
+        <div class="panel-footer">
+            价格{{book.bookPrice}} <a href="#!/detail/{{book.id}}">详情页</a>
+        </div>
+    </div>
+</div>
+<!--书籍地址
+
+http://i.dimg.cc/cd/46/24/56/cc/8f/f9/ce/a6/d4/b4/14/ce/cb/37/ba.jpg
+http://i.dimg.cc/b7/7e/fc/a1/6b/44/88/7b/bb/8f/6e/f7/e9/c1/96/22.jpg
+http://i.dimg.cc/a3/8e/8e/f7/32/bc/be/9b/54/ab/d7/35/66/b8/1a/92.jpg
+http://i.dimg.cc/42/f3/76/57/91/2a/2a/10/ff/d0/31/0b/2c/3f/36/21.jpg
+http://i.dimg.cc/dd/55/e8/c8/df/d8/85/c3/ea/16/40/88/3d/81/e3/7c.jpg
+-->

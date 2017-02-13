@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+
+<div id="app">
+
+    <div class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a href="/home" class="navbar-brand">BookStore</a>
+            </div>
+            <div>
+                <ul class="navbar-nav nav ">
+                    <li>
+                        <router-link to="/home">首页</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/list">列表页</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/add">新增图书</router-link>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <router-view></router-view>
+    </div>
+
+</div>
+
+
+<script type="text/tpl" id="myHome">
+    <div>
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="2000">
+        <div class="carousel-inner" role="listbox">
+        <div class="item active">
+        <img src="http://t12.baidu.com/it/u=918331178,1783361582&fm=72">
+        <div class="carousel-caption">标题1</div>
+        </div>
+        <div class="item">
+        <img src="http://t12.baidu.com/it/u=918331178,1783361582&fm=72">
+        <div class="carousel-caption">标题2</div>
+        </div>
+        </div>
+        </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<script type="text/tpl" id="myAdd">
+    <form class="form-horizontal">
+    <div class="form-group">
+        <label for="bookName" class="control-label">书名</label>
+        <input type="text" class="form-control" id="bookName" placeholder="请输入书名" v-model="book.bookName" >
+    </div>
+    <div class="form-group">
+        <label for="bookPrice" class="control-label">价格</label>
+        <input type="text" class="form-control" id="bookPrice" placeholder="请输入价格"  v-model="book.bookPrice">
+    </div>
+    <div class="form-group">
+        <label for="bookCover" class="control-label">封面</label>
+        <input type="text" class="form-control" id="bookCover" placeholder="请输入封面" v-model="book.bookCover">
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary" @click="addBook">添加</button>
+    </div>
+</form>
+
+
+
+
+
+
+</script>
+<script type="text/tpl" id="myDetail">
+   <div>
+    <div>
+    <div class="panel panel-success ">
+        <div class="panel-heading text-center h4" style="margin-top: 0px">
+            <div v-show='flags'>
+{{book.bookName}}
+            </div>
+            <input type="text" v-show="!flags" v-model='book.bookName'>
+        </div>
+        <div class="panel-body text-center">
+            <img :src="book.bookCover" alt="" style="width: 250px;height: 300px">
+        </div>
+        <div class="panel-footer">
+            <div v-show='flags'>
+{{book.bookPrice}}
+            </div>
+            <input type="text" v-show='!flags'  v-model="book.bookPrice">
+        </div>
+    </div>
+</div>
+<div class="container text-center">
+    <button class="btn btn-primary" @click="change" v-show='flags'>编辑</button>
+    <button class="btn btn-warning" @click="update()" v-show='!flags'>更新</button>
+    <button class="btn btn-warning" v-show='!flags' @click="cancel">取消</button>
+    <button class="btn btn-danger" @click="remove"  v-show='flags'>删除</button>
+</div>
+</div>
+
+
+
+</script>
+<script type="text/tpl" id="myList">
+    <div>
+    <div class="col-md-4 panel panel-success" v-for="book in bookList" >
+        <div class="panel-heading text-center h4" style="margin-top: 0px">
+{{book.bookName}}
+        </div>
+        <div class="panel-body text-center">
+            <img :src="book.bookCover" alt="" style="width: 250px;height: 300px">
+        </div>
+        <div class="panel-footer">
+         价格{{book.bookPrice}}
+         <router-link  :to="{ name: 'detail', params: { id: book.id }}" >详情页</router-link>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+
+<script src="node_modules/vue/dist/vue.js"></script>
+<script src="node_modules/vue-resource/dist/vue-resource.js"></script>
+<script src="node_modules/vue-router/dist/vue-router.js"></script>
+<script>
+
+    var List = {
+        template: $('#myList').html(),
+        data () {
+            return {
+                bookList: []
+            }
+        },
+        methods: {
+            getBookList(){
+                this.$http.get('/books').then((data) => {
+                    this.bookList = data.body;
+                })
+            },
+
+        },
+        created: function () {
+            this.getBookList();
+        }
+    }
+
+    var Detail = {
+        template: $('#myDetail').html(),
+        data: function () {
+            return {
+                book: {},
+                flags: true
+            }
+        },
+        methods: {
+            getBook(){
+                this.$http.get('/books/' + this.$route.params.id).then((data) => {
+                    this.book = data.body;
+                })
+            },
+            change(){
+                this.clonebook = JSON.parse(JSON.stringify(this.book));
+                this.flags = !this.flags;
+            },
+            cancel(){
+                this.book = this.clonebook;
+                this.flags = !this.flags;
+            },
+            update(){
+                this.$http.put('/books/' + this.$route.params.id, this.book).then((data) => {
+                    this.change();
+                })
+            },
+            remove(){
+                this.$http.delete('/books/' + this.$route.params.id).then((data) => {
+                    this.$router.push({path: '/list'});
+                })
+            }
+        },
+        created: function () {
+            this.getBook();
+        }
+    }
+    var Add = {
+        template: $('#myAdd').html(),
+        data(){
+            return {
+                book: {},
+                bookCover: ['http://i.dimg.cc/cd/46/24/56/cc/8f/f9/ce/a6/d4/b4/14/ce/cb/37/ba.jpg', 'http://i.dimg.cc/b7/7e/fc/a1/6b/44/88/7b/bb/8f/6e/f7/e9/c1/96/22.jpg', 'http://i.dimg.cc/a3/8e/8e/f7/32/bc/be/9b/54/ab/d7/35/66/b8/1a/92.jpg', 'http://i.dimg.cc/42/f3/76/57/91/2a/2a/10/ff/d0/31/0b/2c/3f/36/21.jpg', 'http://i.dimg.cc/dd/55/e8/c8/df/d8/85/c3/ea/16/40/88/3d/81/e3/7c.jpg']
+            }
+        },
+        methods: {
+            addBook(){
+                var reg = /jpeg|jpg|png|gif|bmp|svg/gi;
+                var bookCoverMatch = this.book.bookCover.split('.')[1];
+
+                if (!reg.test(bookCoverMatch)) {
+                    this.book.bookCover = this.bookCover[Math.round(Math.random() * 4)]
+                }
+                this.$http.post('/books', this.book).then((data) => {
+                    this.$router.push({path: 'list'});
+                })
+            }
+        }
+    }
+    const router = new VueRouter({
+        routes: [
+            {
+                path: '/home',
+                component: {
+                    template: $('#myHome').html()
+                }
+            }, {
+                path: '/list',
+                component: List
+            }, {
+                path: '/add',
+                component: Add
+            }, {
+                path: '/detail/:id',
+                name: 'detail',
+                component: Detail
+            }
+        ]
+    })
+
+    const app = new Vue({
+        router: router,
+        el: '#app'
+    })
+
+</script>
+</html>
