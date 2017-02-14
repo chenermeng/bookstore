@@ -12,7 +12,7 @@
     <div class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a href="/home" class="navbar-brand">BookStore</a>
+                <a href="javascript:;" class="navbar-brand">BookStore</a>
             </div>
             <div>
                 <ul class="navbar-nav nav ">
@@ -53,17 +53,6 @@
         </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
 </script>
 <script type="text/tpl" id="myAdd">
     <form class="form-horizontal">
@@ -83,11 +72,6 @@
         <button class="btn btn-primary" @click="addBook">添加</button>
     </div>
 </form>
-
-
-
-
-
 
 </script>
 <script type="text/tpl" id="myDetail">
@@ -119,8 +103,6 @@
 </div>
 </div>
 
-
-
 </script>
 <script type="text/tpl" id="myList">
     <div>
@@ -137,15 +119,6 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
 
 </script>
 </body>
@@ -238,6 +211,12 @@
     }
     const router = new VueRouter({
         routes: [
+            {
+                path:'/',
+                component: {
+                    template: $('#myHome').html()
+                }
+            },
             {
                 path: '/home',
                 component: {
